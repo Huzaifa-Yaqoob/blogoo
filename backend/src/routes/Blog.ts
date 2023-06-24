@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { addBlog, deleteBlog } from "../controllers/blog";
 
 const route = Router();
 
@@ -6,13 +7,9 @@ route.get("/", (req, res) => {
   res.send("Post");
 });
 
-route.put("/", (req, res) => {
-  res.send("Post");
-});
+route.post("/", addBlog);
 
-route.delete("/", (req, res) => {
-  res.send("Delete");
-});
+route.delete("/", deleteBlog);
 
 route.patch("/", (req, res) => {
   res.send("Patch");
