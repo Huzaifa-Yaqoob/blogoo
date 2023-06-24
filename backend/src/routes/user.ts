@@ -1,20 +1,22 @@
 import { Router } from "express";
-import {register} from "../controllers/user"
+import authenticate from "../middleware/authenticate";
+import {
+  register,
+  updateAccount,
+  unregister,
+  logIn,
+} from "../controllers/user";
 
 const route = Router();
 
 route.post("/", register);
 
-route.get("/", (req, res) => {
-  res.send("login");
-});
+route.get("/", logIn);
 
-route.patch("/", (req, res) => {
-  res.send("Updated");
-});
+route.use(authenticate);
 
-route.delete("/:id", (req, res) => {
-  res.send("delete");
-});
+route.patch("/", updateAccount);
+
+route.delete("/", unregister);
 
 export default route;
