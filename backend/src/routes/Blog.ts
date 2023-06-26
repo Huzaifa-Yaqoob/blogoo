@@ -1,26 +1,35 @@
 import { Router } from "express";
-import { addBlog, deleteBlog } from "../controllers/blog";
+import authenticate from "../middleware/authenticate";
+import {
+  getAllBlogs,
+  getBlogsWithCategory,
+  getBlogsWithTitle,
+  getFavoriteBlogs,
+  getUserBlogs,
+  addBlog,
+  updateBlog,
+  deleteBlog,
+} from "../controllers/blog";
 
 const route = Router();
 
-route.get("/", (req, res) => {
-  res.send("Post");
-});
+route.get("/", getAllBlogs);
+
+route.get("/:category", getBlogsWithCategory);
+
+route.get("/:title", getBlogsWithTitle);
+
+route.use(authenticate);
+
+route.get("/user-blogs/", getUserBlogs);
+
+route.get("/favorite-blogs/", getFavoriteBlogs);
 
 route.post("/", addBlog);
 
-route.delete("/", deleteBlog);
+route.patch("/:id", updateBlog);
 
-route.patch("/", (req, res) => {
-  res.send("Patch");
-});
-
-route.get("/:id", (req, res) => {
-  res.send("myPost");
-});
-
-route.get("favorite/:id", (req, res) => {
-  res.send("myPost");
-});
+route.delete("/:id", deleteBlog);
 
 export default route;
+

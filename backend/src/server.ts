@@ -5,6 +5,7 @@ import cors from "cors";
 import dbConnect from "./db/database";
 import blog from "./routes/Blog";
 import user from "./routes/User";
+import admin from "./routes/Admin";
 import like from "./routes/Like";
 import report from "./routes/Report";
 
@@ -27,7 +28,9 @@ app.get("/", (req, res) => {
 
 app.use("/user", user);
 
-app.use("/post", blog);
+app.use("/blog", blog);
+
+app.use("/admin", admin);
 
 app.use("/like", like);
 
