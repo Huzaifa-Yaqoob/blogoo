@@ -1,5 +1,6 @@
 import { Schema, model, connect } from "mongoose";
 import isEmail from "validator/lib/isEmail";
+import getCategories from "./getCategories";
 
 const dbConnect = async (): Promise<void> => {
   try {
@@ -10,33 +11,16 @@ const dbConnect = async (): Promise<void> => {
 };
 
 interface admin {
-  name: string;
-  email: string;
+  user_id: Schema.Types.ObjectId;
   key: string;
-  blog_categories: string[];
 }
 
 const adminSchema = new Schema<admin>(
   {
-    name: {
-      type: String,
-      default: "admin",
-    },
-    email: {
-      type: String,
-      required: true,
-      default: "admin@getMaxListeners.com",
-      validate: function (email: string) {
-        if (!isEmail(email)) {
-          throw new Error("Invalid email");
-        }
-      },
-    },
     key: {
       type: String,
-      default: "123456789",
+      default: "HUKAM",
     },
-    blog_categories: [String],
   },
   { timestamps: true }
 );
@@ -84,8 +68,8 @@ interface blog {
   title: string;
   summary: string;
   content: string;
-  author_name: Schema.Types.ObjectId;
-  categories: string[];
+  author_id: Schema.Types.ObjectId;
+  categories: [string];
   hidden: boolean;
   reports: Schema.Types.ObjectId[];
 }
@@ -106,15 +90,28 @@ const blogSchema = new Schema<blog>(
     },
     content: {
       type: String,
-      required: true,
+      required: [true, "Content is essential"],
     },
-    author_name: {
+    author_id: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     categories: {
-      type: [String],
+      type: [
+        {
+          type: String,
+          enum: [
+            "Technology",
+            "Entertainment",
+            "Science",
+            "Sports",
+            "Health",
+            "Lovely",
+            "Horror",
+          ],
+        },
+      ],
     },
     hidden: {
       type: Boolean,
@@ -129,6 +126,22 @@ const blogSchema = new Schema<blog>(
   },
   { timestamps: true }
 );
+
+interface metaDataForBlog {
+  admin_id: Schema.Types.ObjectId;
+  selected_categories: string[];
+  unselected_categories: string[];
+}
+
+const metaDataForBlogSchema = new Schema<metaDataForBlog>({
+  admin_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Admin",
+    required: true,
+  },
+  selected_categories: [String],
+  unselected_categories: [String],
+});
 
 interface like {
   user: Schema.Types.ObjectId;
@@ -174,8 +187,12 @@ const reportSchema = new Schema<report>(
 const Admin = model<admin>("Admin", adminSchema);
 const User = model<user>("User", userSchema);
 const Blog = model<blog>("Blog", blogSchema);
+const metaDataForBlog = model<metaDataForBlog>(
+  "metaDataForBlog",
+  metaDataForBlogSchema
+);
 const Like = model<like>("Like", likeSchema);
 const Report = model<report>("Report", reportSchema);
 
 export default dbConnect;
-export { Admin, User, Blog, Like, Report };
+export { Admin, User, Blog, metaDataForBlog, Like, Report };
