@@ -9,15 +9,15 @@ import isObjectEmpty from "../lib/isObjectEmpty";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    let { email, name, password } = req.body;
+    let { password } = req.body;
     const salt = await bcrypt.genSalt();
     password = await bcrypt.hash(password, salt);
-    const user = new User({ email, name, password });
+    const user = new User(req.body);
     const result = await user.save();
     const token = createToken(result._id.toString());
-    res.setHeader("authorization", `Bearer ${token}`).send({ result });
+    res.send({ ...result, token });
   } catch (error) {
-    res.status(400).send(errorHandler(error));
+    res.status(400).send("This is an error");
   }
 };
 
@@ -32,7 +32,9 @@ export const logIn = async (req: Request, res: Response) => {
       console.log(auth);
       if (auth) {
         const token = createToken(user._id.toString());
-        res.setHeader("authorization", `Bearer ${token}`).send({...user, adminId});
+        res
+          .setHeader("authorization", `Bearer ${token}`)
+          .send({ ...user, adminId });
         return;
       }
       throw new Error("PasswordUnmatched");
