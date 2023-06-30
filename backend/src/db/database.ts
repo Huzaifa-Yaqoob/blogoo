@@ -26,7 +26,7 @@ const adminSchema = new Schema<admin>(
 );
 
 interface user {
-  name: string;
+  username: string;
   email: string;
   password: string;
   avatar: string;
@@ -45,7 +45,7 @@ const userSchema = new Schema<user>(
         }
       },
     },
-    name: {
+    username: {
       type: String,
       trim: true,
       required: [true, "Name is required"],

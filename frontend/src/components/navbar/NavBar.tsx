@@ -1,16 +1,16 @@
-import NavLinks from "./NavLinks";
+import NavLinks from "./NavDropDown";
 import ToggleTheme from "./ToggleTheme";
-import { Button } from "../ui/button";
+import NavDialog from "./NavDialog";
 
 export default function NavBar() {
   return (
-    <header className="py-2 px-4">
+    <header className="py-2 px-4 shadow-md sticky top-0 bg-background">
       <nav className="flex justify-between items-center">
-        Logo
-        <NavLinks />
-        <div className="flex items-center space-x-4">
+        <img src="logo.svg" alt="Logo" className=" w-10" />
+        <div className="flex items-center space-x-8">
           <ToggleTheme />
-          <Button className=" h-8">Log In</Button>
+          <NavLinks />
+          <NavDialog />
         </div>
       </nav>
     </header>
