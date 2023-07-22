@@ -15,54 +15,12 @@ interface admin {
   key: string;
 }
 
-const adminSchema = new Schema<admin>(
-  {
-    key: {
-      type: String,
-      default: "HUKAM",
-    },
-  },
-  { timestamps: true }
-);
-
 interface user {
   username: string;
   email: string;
   password: string;
   avatar: string;
 }
-
-const userSchema = new Schema<user>(
-  {
-    email: {
-      type: String,
-      trim: true,
-      required: [true, "Email is required"],
-      unique: true,
-      validate: function (email: string) {
-        if (!isEmail(email)) {
-          throw new Error("Invalid email");
-        }
-      },
-    },
-    username: {
-      type: String,
-      trim: true,
-      required: [true, "Name is required"],
-      minlength: [6, "Name must be at least 6 characters"],
-    },
-    password: {
-      type: String,
-      required: [true, "password is required"],
-      minlength: [8, "Password must be at least 8 characters"],
-    },
-    avatar: {
-      type: String,
-      default: "unknown",
-    },
-  },
-  { timestamps: true }
-);
 
 interface blog {
   title: string;
@@ -74,23 +32,81 @@ interface blog {
   reports: Schema.Types.ObjectId[];
 }
 
+interface metaDataForBlog {
+  admin_id: Schema.Types.ObjectId;
+  selected_categories: string[];
+  unselected_categories: string[];
+}
+
+interface like {
+  user: Schema.Types.ObjectId;
+  blog: Schema.Types.ObjectId;
+}
+
+interface report {
+  report_message: string;
+  reporter: Schema.Types.ObjectId;
+}
+
+const adminSchema = new Schema<admin>(
+  {
+    key: {
+      type: String,
+      default: "HUKAM",
+    },
+  },
+  { timestamps: true }
+);
+
+const userSchema = new Schema<user>(
+  {
+    email: {
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+      validate: function (email: string) {
+        if (!isEmail(email)) {
+          throw new Error("Invalid email");
+        }
+      },
+    },
+    username: {
+      type: String,
+      trim: true,
+      required: true,
+      minlength: 2,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+    },
+    avatar: {
+      type: String,
+      default: "unknown",
+    },
+  },
+  { timestamps: true }
+);
+
 const blogSchema = new Schema<blog>(
   {
     title: {
       type: String,
       trim: true,
-      required: [true, "Title is essential"],
-      maxlength: [50, "Title must be less then 50 characters"],
+      required: true,
+      maxlength: 50,
       unique: true,
     },
     summary: {
       type: String,
       trim: true,
-      maxlength: [200, "Summary must be less then 200 characters"],
+      maxlength: 200,
     },
     content: {
       type: String,
-      required: [true, "Content is essential"],
+      required: true,
     },
     author_id: {
       type: Schema.Types.ObjectId,
@@ -98,20 +114,7 @@ const blogSchema = new Schema<blog>(
       required: true,
     },
     categories: {
-      type: [
-        {
-          type: String,
-          enum: [
-            "Technology",
-            "Entertainment",
-            "Science",
-            "Sports",
-            "Health",
-            "Lovely",
-            "Horror",
-          ],
-        },
-      ],
+      type: [String],
     },
     hidden: {
       type: Boolean,
@@ -127,12 +130,6 @@ const blogSchema = new Schema<blog>(
   { timestamps: true }
 );
 
-interface metaDataForBlog {
-  admin_id: Schema.Types.ObjectId;
-  selected_categories: string[];
-  unselected_categories: string[];
-}
-
 const metaDataForBlogSchema = new Schema<metaDataForBlog>({
   admin_id: {
     type: Schema.Types.ObjectId,
@@ -142,11 +139,6 @@ const metaDataForBlogSchema = new Schema<metaDataForBlog>({
   selected_categories: [String],
   unselected_categories: [String],
 });
-
-interface like {
-  user: Schema.Types.ObjectId;
-  blog: Schema.Types.ObjectId;
-}
 
 const likeSchema = new Schema<like>(
   {
@@ -164,17 +156,12 @@ const likeSchema = new Schema<like>(
   { timestamps: true }
 );
 
-interface report {
-  report_message: string;
-  reporter: Schema.Types.ObjectId;
-}
-
 const reportSchema = new Schema<report>(
   {
     report_message: {
       type: String,
       require: true,
-      max: [200, "Summary must be less then 200 characters"],
+      max: 200,
     },
     reporter: {
       type: Schema.Types.ObjectId,
