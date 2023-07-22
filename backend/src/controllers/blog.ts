@@ -1,42 +1,64 @@
 import { Request, Response } from "express";
 import errorHandler from "../lib/errorHandler";
 import { CustomRequest } from "../middleware/authenticate";
-import { Blog } from "../db/database";
+import { Blog, Like } from "../db/database";
+import {
+  allBlogs,
+  titledBlogs,
+  categoryBlogs,
+  userBlogs,
+  favoriteBlogs,
+} from "../db/BlogsAggregation";
 
-export const getAllBlogs = function (req: Request, res: Response) {
+export const getAllBlogs = async function (req: Request, res: Response) {
   try {
-    const blogs = Blog.find().sort({ createdAt: -1 });
-    res.send(blogs);
-  } catch (error) {}
+    res.send(await allBlogs());
+  } catch (error) {
+    console.log(error);
+    res.status(500).send();
+  }
 };
 
-export const getBlogsWithCategory = function (req: Request, res: Response) {
+export const getBlogsWithCategory = async function (
+  req: Request,
+  res: Response
+) {
   try {
     const category = req.params.category;
-    const blogs = Blog.find({ category }).sort({ createdAt: -1 });
-    res.send(blogs);
-  } catch (error) {}
+    console.log(category);
+    res.send(await categoryBlogs(category));
+  } catch (error) {
+    res.status(500).send();
+  }
 };
 
-export const getBlogsWithTitle = function (req: Request, res: Response) {
+export const getBlogsWithTitle = async function (req: Request, res: Response) {
   try {
     const title = req.params.title;
-    const blogs = Blog.find({ title }).sort({ createdAt: -1 });
-    res.send(blogs);
-  } catch (error) {}
+    res.send(await titledBlogs(title));
+  } catch (error) {
+    res.status(500).send();
+  }
 };
 
-export const getUserBlogs = function (req: CustomRequest, res: Response) {
+export const getUserBlogs = async function (req: CustomRequest, res: Response) {
   try {
-    const userBlogs = Blog.find({ _id: req.userId }).sort({ createdAt: -1 });
-    res.send(userBlogs);
-  } catch (error) {}
+    res.send(await userBlogs(req.userId));
+  } catch (error) {
+    res.status(500).send();
+  }
 };
 
-export const getFavoriteBlogs = function (req: CustomRequest, res: Response) {
+export const getFavoriteBlogs = async function (
+  req: CustomRequest,
+  res: Response
+) {
   try {
-    res.send("posting a blog");
-  } catch (error) {}
+    console.log("Huzaifa");
+    res.send(await favoriteBlogs(req.userId));
+  } catch (error) {
+    res.status(500).send();
+  }
 };
 
 export const addBlog = async function (req: CustomRequest, res: Response) {
@@ -45,24 +67,30 @@ export const addBlog = async function (req: CustomRequest, res: Response) {
     await blog.save();
     res.send();
   } catch (error) {
-    console.log(error);
-    res.send("Error");
+    res.status(400).send();
   }
-}; 
+};
 
 export const updateBlog = function (req: CustomRequest, res: Response) {
   try {
     res.send("posting a blog");
-  } catch (error) {}
+  } catch (error) {
+    res.status(404).send();
+  }
 };
 
 export const deleteBlog = async function (req: CustomRequest, res: Response) {
   try {
     const _id = req.params.id;
     const author_id = req.userId;
-    await Blog.findOneAndDelete({ _id, author_id });
+    console.log("delete");
+    if (!(await Blog.findOneAndDelete({ _id, author_id }))) {
+      await Like.deleteMany({ blog: _id });
+    } else {
+      res.send(400);
+    }
     res.send();
   } catch (error) {
-    res.status(500).send()
+    res.status(500).send();
   }
 };

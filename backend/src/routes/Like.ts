@@ -1,9 +1,11 @@
 import { Router } from "express";
+import { like } from "../controllers/like";
+import authenticate from "../middleware/authenticate";
 
 const route = Router();
 
-route.get("/", (req, res) => {});
+route.use(authenticate);
 
-route.delete("/", (req, res) => {});
+route.post("/:id", like);
 
 export default route;

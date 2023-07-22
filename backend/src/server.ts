@@ -1,4 +1,6 @@
 import express from "express";
+import bodyParser from "body-parser";
+import multer from "multer";
 import "dotenv/config";
 import { config } from "dotenv";
 import cors from "cors";
@@ -13,14 +15,20 @@ config({ path: "../.env" });
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+export const upload = multer({ dest: "uploads/" });
 
-dbConnect();
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json());
+
+dbConnect();
 
 app.get("/", (req, res) => {
   res.send("server is running");
@@ -35,6 +43,10 @@ app.use("/admin", admin);
 app.use("/like", like);
 
 app.use("/report", report);
+
+app.get("*", (req, res) => {
+  res.send(400).send({notFound: true});
+})
 
 try {
   app.listen(process.env.PORT, () => {

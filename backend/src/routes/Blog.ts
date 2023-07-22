@@ -15,9 +15,9 @@ const route = Router();
 
 route.get("/", getAllBlogs);
 
-route.get("/:category", getBlogsWithCategory);
+route.get("/category/:category", getBlogsWithCategory);
 
-route.get("/:title", getBlogsWithTitle);
+route.get("/title/:title", getBlogsWithTitle);
 
 route.use(authenticate);
 

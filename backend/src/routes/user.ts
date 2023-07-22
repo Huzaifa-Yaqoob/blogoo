@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authenticate from "../middleware/authenticate";
+import { upload } from "../server";
 import {
   register,
   updateAccount,

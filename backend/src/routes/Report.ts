@@ -1,9 +1,10 @@
 import { Router } from "express";
+import authenticate from "../middleware/authenticate";
 
 const route = Router();
 
-route.get("/", (req, res) => {});
+route.use(authenticate);
 
-route.delete("/", (req, res) => {});
+route.post("/:id", (req, res) => {});
 
 export default route;
