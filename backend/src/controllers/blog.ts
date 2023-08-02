@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import errorHandler from "../lib/errorHandler";
 import { CustomRequest } from "../middleware/authenticate";
-import { Blog, Like } from "../db/database";
+import { Blog, Like, MetaDataForBlog } from "../db/database";
 import {
   allBlogs,
   titledBlogs,
@@ -10,12 +9,22 @@ import {
   favoriteBlogs,
 } from "../db/BlogsAggregation";
 
+export const getCategories = async (req: Request, res: Response) => {
+  try {
+    const categories = await MetaDataForBlog.find({});
+    res.send(categories[0].selected_categories);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(404);
+  }
+};
+
 export const getAllBlogs = async function (req: Request, res: Response) {
   try {
     res.send(await allBlogs());
   } catch (error) {
     console.log(error);
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };
 
@@ -28,7 +37,7 @@ export const getBlogsWithCategory = async function (
     console.log(category);
     res.send(await categoryBlogs(category));
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };
 
@@ -37,7 +46,7 @@ export const getBlogsWithTitle = async function (req: Request, res: Response) {
     const title = req.params.title;
     res.send(await titledBlogs(title));
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };
 
@@ -45,7 +54,7 @@ export const getUserBlogs = async function (req: CustomRequest, res: Response) {
   try {
     res.send(await userBlogs(req.userId));
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };
 
@@ -54,28 +63,30 @@ export const getFavoriteBlogs = async function (
   res: Response
 ) {
   try {
-    console.log("Huzaifa");
     res.send(await favoriteBlogs(req.userId));
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };
 
 export const addBlog = async function (req: CustomRequest, res: Response) {
   try {
-    const blog = new Blog({ ...req.body, author_id: req.userId });
-    await blog.save();
+    await new Blog({ ...req.body, author_id: req.userId }).save();
     res.send();
   } catch (error) {
-    res.status(400).send();
+    res.sendStatus(404);
   }
 };
 
-export const updateBlog = function (req: CustomRequest, res: Response) {
+export const updateBlog = async function (req: CustomRequest, res: Response) {
   try {
-    res.send("posting a blog");
+    await Blog.findByIdAndUpdate(req.params.blog, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.sendStatus(200);
   } catch (error) {
-    res.status(404).send();
+    res.sendStatus(404);
   }
 };
 
@@ -83,14 +94,13 @@ export const deleteBlog = async function (req: CustomRequest, res: Response) {
   try {
     const _id = req.params.id;
     const author_id = req.userId;
-    console.log("delete");
     if (!(await Blog.findOneAndDelete({ _id, author_id }))) {
       await Like.deleteMany({ blog: _id });
     } else {
-      res.send(400);
+      res.sendStatus(400);
     }
     res.send();
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };

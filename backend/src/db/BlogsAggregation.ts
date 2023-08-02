@@ -8,14 +8,14 @@ const likesLookup = {
   as: "likes",
 };
 
-const userLookup = {
+export const userLookup = {
   from: "users",
   localField: "author_id",
   foreignField: "_id",
   as: "author",
 };
 
-const addFields = {
+export const addFields = {
   likesCount: { $size: "$likes" },
   authorName: { $arrayElemAt: ["$author.username", 0] },
   authorAvatar: { $arrayElemAt: ["$author.avatar", 0] },
@@ -27,7 +27,7 @@ const addFields = {
   },
 };
 
-const project = {
+export const project = {
   _id: 1,
   title: 1,
   summary: 1,
@@ -43,26 +43,19 @@ const sort = {
   createdAt: -1,
 };
 
-export const allBlogs = async (category = "", title = "") => {
+export const allBlogs = async () => {
   return await Blog.aggregate([
     {
       $match: {
         hidden: false,
       },
     },
-    {
-      $lookup: likesLookup,
-    },
-    {
-      $lookup: userLookup,
-    },
-    {
-      $addFields: addFields,
-    },
-    {
-      $project: project,
-    },
+    { $lookup: likesLookup },
+    { $lookup: userLookup },
+    { $addFields: addFields },
+    { $project: project },
     { $sort: { createdAt: -1 } },
+    { $limit: 20 },
   ]);
 };
 
@@ -78,19 +71,12 @@ export const titledBlogs = async (title: string) => {
         },
       },
     },
-    {
-      $lookup: likesLookup,
-    },
-    {
-      $lookup: userLookup,
-    },
-    {
-      $addFields: addFields,
-    },
-    {
-      $project: project,
-    },
+    { $lookup: likesLookup },
+    { $lookup: userLookup },
+    { $addFields: addFields },
+    { $project: project },
     { $sort: { createdAt: -1 } },
+    { $limit: 20 },
   ]);
 };
 
@@ -104,19 +90,12 @@ export const categoryBlogs = async (category: string) => {
         },
       },
     },
-    {
-      $lookup: likesLookup,
-    },
-    {
-      $lookup: userLookup,
-    },
-    {
-      $addFields: addFields,
-    },
-    {
-      $project: project,
-    },
+    { $lookup: likesLookup },
+    { $lookup: userLookup },
+    { $addFields: addFields },
+    { $project: project },
     { $sort: { createdAt: -1 } },
+    { $limit: 20 },
   ]);
 };
 
@@ -127,15 +106,9 @@ export const userBlogs = async (userID: string) => {
         author_id: new mongoose.Types.ObjectId(userID),
       },
     },
-    {
-      $lookup: likesLookup,
-    },
-    {
-      $lookup: userLookup,
-    },
-    {
-      $addFields: addFields,
-    },
+    { $lookup: likesLookup },
+    { $lookup: userLookup },
+    { $addFields: addFields },
     {
       $project: {
         hidden: 1,
@@ -143,6 +116,7 @@ export const userBlogs = async (userID: string) => {
       },
     },
     { $sort: { createdAt: -1 } },
+    { $limit: 20 },
   ]);
 };
 
@@ -169,16 +143,11 @@ export const favoriteBlogs = async (userID: string) => {
         newRoot: "$blog",
       },
     },
-    {
-      $lookup: userLookup,
-    },
-    {
-      $lookup: likesLookup,
-    },
-    {
-      $addFields: addFields,
-    },
+    { $lookup: userLookup },
+    { $lookup: likesLookup },
+    { $addFields: addFields },
     { $project: project },
     { $sort: { createdAt: -1 } },
+    { $limit: 20 },
   ]);
 };

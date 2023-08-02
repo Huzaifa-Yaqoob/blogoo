@@ -44,9 +44,9 @@ app.use("/like", like);
 
 app.use("/report", report);
 
-app.get("*", (req, res) => {
-  res.send(400).send({notFound: true});
-})
+// app.get("*", (req, res) => {
+//   res.status(400).send({notFound: true});
+// })
 
 try {
   app.listen(process.env.PORT, () => {
