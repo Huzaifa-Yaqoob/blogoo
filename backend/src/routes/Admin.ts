@@ -1,11 +1,25 @@
 import { Router } from "express";
-import adminAuthentication from "../middleware/adminAuthentication";
-import { setCategories } from "../controllers/admin";
+import authenticate from "../middleware/authenticate";
+import {
+  getReports,
+  hideBlog,
+  setCategories,
+  getCategories,
+  setAdmin,
+} from "../controllers/admin";
 
 const route = Router();
 
-route.use(adminAuthentication);
+route.use(authenticate);
 
-// route.post("/", setCategories);
+// route.post("/ao", setAdmin);
 
-export default route;  
+route.get("/", getReports);
+
+route.patch("/:id", hideBlog);
+
+route.get("/category", getCategories);
+
+route.put("/category/:category", setCategories);
+
+export default route;

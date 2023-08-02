@@ -1,6 +1,14 @@
 import { Schema, model, connect } from "mongoose";
 import isEmail from "validator/lib/isEmail";
-import getCategories from "./getCategories";
+import { categoryArray } from "../lib/categoryArray";
+import {
+  admin,
+  user,
+  blog,
+  metaDataForBlog,
+  like,
+  report,
+} from "../lib/schemaTypes";
 
 const dbConnect = async (): Promise<void> => {
   try {
@@ -10,46 +18,9 @@ const dbConnect = async (): Promise<void> => {
   }
 };
 
-interface admin {
-  user_id: Schema.Types.ObjectId;
-  key: string;
-}
-
-interface user {
-  username: string;
-  email: string;
-  password: string;
-  avatar: string;
-}
-
-interface blog {
-  title: string;
-  summary: string;
-  content: string;
-  author_id: Schema.Types.ObjectId;
-  categories: [string];
-  hidden: boolean;
-  reports: Schema.Types.ObjectId[];
-}
-
-interface metaDataForBlog {
-  admin_id: Schema.Types.ObjectId;
-  selected_categories: string[];
-  unselected_categories: string[];
-}
-
-interface like {
-  user: Schema.Types.ObjectId;
-  blog: Schema.Types.ObjectId;
-}
-
-interface report {
-  report_message: string;
-  reporter: Schema.Types.ObjectId;
-}
-
 const adminSchema = new Schema<admin>(
   {
+    user_id: Schema.Types.ObjectId,
     key: {
       type: String,
       default: "HUKAM",
@@ -115,12 +86,21 @@ const blogSchema = new Schema<blog>(
     },
     categories: {
       type: [String],
+      validate: {
+        validator: async function (categories: string[]) {
+          const metaData = await MetaDataForBlog.findOne();
+          const selectedCategories = metaData?.selected_categories || [];
+          return categories.every((category) =>
+            selectedCategories.includes(category)
+          );
+        },
+      },
     },
     hidden: {
       type: Boolean,
       default: false,
     },
-    reports: [
+    reports_id: [
       {
         type: Schema.Types.ObjectId,
         ref: "Report",
@@ -131,13 +111,14 @@ const blogSchema = new Schema<blog>(
 );
 
 const metaDataForBlogSchema = new Schema<metaDataForBlog>({
-  admin_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Admin",
-    required: true,
+  all_categories: {
+    type: [String],
+    default: categoryArray,
   },
-  selected_categories: [String],
-  unselected_categories: [String],
+  selected_categories: {
+    type: [String],
+    default: categoryArray,
+  },
 });
 
 const likeSchema = new Schema<like>(
@@ -160,10 +141,10 @@ const reportSchema = new Schema<report>(
   {
     report_message: {
       type: String,
-      require: true,
+      required: true,
       max: 200,
     },
-    reporter: {
+    reporter_id: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
@@ -174,7 +155,7 @@ const reportSchema = new Schema<report>(
 const Admin = model<admin>("Admin", adminSchema);
 const User = model<user>("User", userSchema);
 const Blog = model<blog>("Blog", blogSchema);
-const metaDataForBlog = model<metaDataForBlog>(
+const MetaDataForBlog = model<metaDataForBlog>(
   "metaDataForBlog",
   metaDataForBlogSchema
 );
@@ -182,4 +163,4 @@ const Like = model<like>("Like", likeSchema);
 const Report = model<report>("Report", reportSchema);
 
 export default dbConnect;
-export { Admin, User, Blog, metaDataForBlog, Like, Report };
+export { Admin, User, Blog, MetaDataForBlog, Like, Report };

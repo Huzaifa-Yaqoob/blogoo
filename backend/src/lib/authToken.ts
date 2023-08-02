@@ -13,7 +13,6 @@ export const decodeToken = (token: string): any => {
     if (err) {
       throw new Error("TokenMissing");
     } else {
-      console.log(decodeToken);
       userID = decodedToken.id;
     }
   });

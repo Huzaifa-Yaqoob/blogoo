@@ -9,11 +9,14 @@ import {
   addBlog,
   updateBlog,
   deleteBlog,
+  getCategories
 } from "../controllers/blog";
 
 const route = Router();
 
 route.get("/", getAllBlogs);
+
+route.get("/category", getCategories);
 
 route.get("/category/:category", getBlogsWithCategory);
 

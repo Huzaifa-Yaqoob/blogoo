@@ -11,6 +11,6 @@ export const like = async (req: CustomRequest, res: Response) => {
     }
     res.send();
   } catch (error) {
-    res.status(500).send();
+    res.sendStatus(404);
   }
 };

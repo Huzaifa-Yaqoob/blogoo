@@ -1,40 +1,37 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { User, Admin } from "../db/database";
+import { User } from "../db/database";
 import validateID from "../lib/validateId";
 import { createToken } from "../lib/authToken";
 import { CustomRequest } from "../middleware/authenticate";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    let { email, username, password } = req.body;
-    console.log(req.body);
-    const file = req.file;
     const salt = await bcrypt.genSalt();
-    password = await bcrypt.hash(password, salt);
-    const newUser = new User({ email, username, password });
-    const user = await newUser.save();
-    const token = createToken(user._id.toString());
-    res.setHeader("authorization", `Bearer ${token}`).send(user);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+    const { _id, username, email, password } = await new User(req.body).save();
+    const token = createToken(_id.toString());
+    res.setHeader("authorization", `Bearer ${token}`).send({ username, email });
   } catch (error) {
     console.log(error);
     if (error.code === 11000) {
       res.status(400).send({ email: "This account is already exists" });
     } else {
-      res.status(400).send({ error: "Client Side Error" });
+      res.sendStatus(404);
     }
   }
 };
 
 export const logIn = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: req.body.email });
     if (user) {
-      const auth = await bcrypt.compare(password, user.password);
+      const auth = await bcrypt.compare(req.body.password, user.password);
       if (auth) {
         const token = createToken(user._id.toString());
-        res.setHeader("authorization", `Bearer ${token}`).send({ user });
+        res
+          .setHeader("authorization", `Bearer ${token}`)
+          .send({ email: user.email, username: user.username });
         return;
       }
       throw new Error("PasswordUnmatched");
@@ -47,7 +44,7 @@ export const logIn = async (req: Request, res: Response) => {
     } else if (error.message === "PasswordUnmatched") {
       res.status(400).send({ password: "Password incorrect" });
     } else {
-      res.status(400).send({ error: "Client side error" });
+      res.sendStatus(404);
     }
   }
 };
@@ -56,14 +53,14 @@ export const updateAccount = async (req: CustomRequest, res: Response) => {
   try {
     const _id: string = req.userId;
     const { name } = req.body;
-    const user = await User.findOneAndUpdate(
-      { _id },
+    const user = await User.findByIdAndUpdate(
+      _id,
       { name },
       { new: true, runValidators: true }
     );
     res.send(user);
   } catch (error) {
-    res.status(400).send({ error: "Client side error" });
+    res.sendStatus(404);
   }
 };
 
@@ -74,6 +71,6 @@ export const unregister = async (req: CustomRequest, res: Response) => {
     res.send(await User.deleteOne({ _id }));
   } catch (error) {
     console.log(error.message);
-    res.status(400).send({ authorization: "You are not logged in" });
+    res.sendStatus(404);
   }
 };
