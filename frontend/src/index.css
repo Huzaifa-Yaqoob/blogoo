@@ -13,7 +13,7 @@
     --popover: 0, 0%, 90%;
     --popover-foreground: 0, 0%, 10%;
 
-    --card-mask: 0, 0%, 95%, 0.5;
+    --card-mask: 0, 0%, 95%, 0.3;
     --card: 0, 0%, 95%;
     --card-foreground: 0, 0%, 11%;
 
@@ -50,7 +50,7 @@
     --popover: 0, 0%, 10%;
     --popover-foreground: 0, 0%, 90%;
 
-    --card-mask: 0, 0%, 11%, 0.5;
+    --card-mask: 0, 0%, 11%, 0.3;
     --card: 0, 0%, 11%;
     --card-foreground: 0, 0%, 95%;
 
@@ -91,4 +91,14 @@
 
 .cardMask {
   background-color: hsla(var(--card-mask));
+}
+
+.like {
+  fill: #FF2400;
+  stroke: #FF2400;
+}
+
+.unlike {
+  fill: none;
+  stroke: hsl(var(--foreground));
 }
