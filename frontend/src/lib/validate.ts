@@ -26,10 +26,5 @@ export interface User {
 export interface Data {
   email: string;
   username: string;
-  password: string;
   avatar: string;
-  _id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
 }

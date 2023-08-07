@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation } from "react-query";
 import { LoginFormSchema } from "@/lib/validate";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { useUserStore } from "@/lib/store";
+import ErrorMessage from "../ErrorMessage";
+import { logIn } from "@/api/api";
+import ButtonLoading from "../ButtonLoading";
 import {
   FormField,
   FormItem,
@@ -13,6 +19,28 @@ import {
 } from "ui/form";
 
 export default function LogIn() {
+  const [error, setError] = useState("");
+  const [setUser, setIsLogIn] = useUserStore((state) => [
+    state.setUser,
+    state.setIsLogIn,
+  ]);
+
+  const logInMutate = useMutation(logIn, {
+    onSuccess: (data: any) => {
+      console.log(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
+      setIsLogIn(true);
+    },
+    onError: (error: any) => {
+      setError(error.response.data.message);
+    },
+  });
+
+  function onSubmit(loginData: z.infer<typeof LoginFormSchema>) {
+    logInMutate.mutate(loginData);
+  }
+
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -20,10 +48,6 @@ export default function LogIn() {
       password: "",
     },
   });
-
-  function onSubmit(values: z.infer<typeof LoginFormSchema>) {
-    console.log(values);
-  }
 
   return (
     <FormProvider {...form}>
@@ -54,7 +78,10 @@ export default function LogIn() {
             </FormItem>
           )}
         />
-        <Button type="submit">Log In</Button>
+        {logInMutate.isError ? <ErrorMessage message={error} /> : <></>}
+        <Button type="submit" className="w-full">
+          {logInMutate.isLoading ? <ButtonLoading /> : "Log In"}
+        </Button>
       </form>
     </FormProvider>
   );

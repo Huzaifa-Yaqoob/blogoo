@@ -4,73 +4,75 @@
 
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 0 0% 11%;
+    --background: 0, 0%, 99%;
+    --foreground: 0, 0%, 11%;
 
-    --muted: 0 0% 78%;
-    --muted-foreground: 0 0% 18%;
+    --muted: 0, 0%, 78%;
+    --muted-foreground: 0, 0%, 18%;
 
-    --popover: 0 0% 90%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 0, 0%, 90%;
+    --popover-foreground: 0, 0%, 10%;
 
-    --card: 0 0% 95%;
-    --card-foreground: 0 0% 11%;
+    --card-mask: 0, 0%, 95%, 0.5;
+    --card: 0, 0%, 95%;
+    --card-foreground: 0, 0%, 11%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 100%;
+    --border: 0, 0%, 15%;
+    --input: 0, 0%, 100%;
 
-    --primary: 8 100% 71%;
-    --primary-foreground: 8 100% 30%;
-    --primary-hover: 8 100% 75%;
+    --primary: 8, 100%, 71%;
+    --primary-foreground: 8, 100%, 30%;
+    --primary-hover: 8, 100%, 75%;
 
-    --secondary: 251 21% 71%;
-    --secondary-foreground: 251 21% 40%;
-    --secondary-hover: 251 21% 75%;
+    --secondary: 251, 21%, 71%;
+    --secondary-foreground: 251, 21%, 40%;
+    --secondary-hover: 251, 21%, 75%;
 
-    --accent: 255 24% 80%;
-    --accent-foreground: 255 24% 30%;
-    --accent-hover: 255 24% 85%;
+    --accent: 255, 24%, 80%;
+    --accent-foreground: 255, 24%, 30%;
+    --accent-hover: 255, 24%, 85%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0, 84.2%, 60.2%;
+    --destructive-foreground: 0, 0%, 98%;
 
-    --ring: 0 0% 63.9%;
+    --ring: 0, 0%, 63.9%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 11%;
-    --foreground: 0 0% 99%;
+    --background: 0, 0%, 11%;
+    --foreground: 0, 0%, 99%;
 
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 78%;
+    --muted: 0, 0%, 18%;
+    --muted-foreground: 0, 0%, 78%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 90%;
+    --popover: 0, 0%, 10%;
+    --popover-foreground: 0, 0%, 90%;
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 95%;
+    --card-mask: 0, 0%, 11%, 0.5;
+    --card: 0, 0%, 11%;
+    --card-foreground: 0, 0%, 95%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 100%;
+    --border: 0, 0%, 15%;
+    --input: 0, 0%, 100%;
 
-    --primary: 8 100% 30%;
-    --primary-foreground: 8 100% 71%;
-    --primary-hover: 8 100% 35%;
+    --primary: 8, 100%, 30%;
+    --primary-foreground: 8, 100%, 71%;
+    --primary-hover: 8, 100%, 35%;
 
-    --secondary: 251 21% 40%;
-    --secondary-foreground: 251 21% 71%;
-    --secondary-hover: 251 21% 35%;
+    --secondary: 251, 21%, 40%;
+    --secondary-foreground: 251, 21%, 71%;
+    --secondary-hover: 251, 21%, 35%;
 
-    --accent: 255 24% 30%;
-    --accent-foreground: 255 24% 80%;
-    --accent-hover: 255 24% 25%;
+    --accent: 255, 24%, 30%;
+    --accent-foreground: 255, 24%, 80%;
+    --accent-hover: 255, 24%, 25%;
 
-    --destructive: 0 0% 98%;
-    --destructive-foreground: 0 84.2% 60.2%;
+    --destructive: 0, 0%, 98%;
+    --destructive-foreground: 0, 84.2%, 60.2%;
 
-    --ring: 0 0% 14.9%;
+    --ring: 0, 0%, 14.9%;
   }
 }
 
@@ -83,6 +85,10 @@
   }
 }
 
-.active .link{
+.active .link {
   background-color: hsl(var(--accent));
+}
+
+.cardMask {
+  background-color: hsla(var(--card-mask));
 }

@@ -24,7 +24,7 @@ export default function ToggleTheme() {
 
   return (
     <div onClick={toggleTheme} className="cursor-pointer">
-      {theme === "dark" ? <Moon /> : <Sun />}
+      {theme === "dark" ? <Sun /> : <Moon />}
     </div>
   );
 }

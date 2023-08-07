@@ -9,13 +9,12 @@ export const register = async (req: Request, res: Response) => {
   try {
     const salt = await bcrypt.genSalt();
     req.body.password = await bcrypt.hash(req.body.password, salt);
-    const { _id, username, email, password } = await new User(req.body).save();
+    const { _id, username, email, avatar } = await new User(req.body).save();
     const token = createToken(_id.toString());
-    res.setHeader("authorization", `Bearer ${token}`).send({ username, email });
+    res.send({ username, email, token, avatar });
   } catch (error) {
-    console.log(error);
     if (error.code === 11000) {
-      res.status(400).send({ email: "This account is already exists" });
+      res.status(400).send({ message: "This account is already exists" });
     } else {
       res.sendStatus(404);
     }
@@ -31,7 +30,7 @@ export const logIn = async (req: Request, res: Response) => {
         const token = createToken(user._id.toString());
         res
           .setHeader("authorization", `Bearer ${token}`)
-          .send({ email: user.email, username: user.username });
+          .send({ email: user.email, username: user.username, avatar: user.avatar });
         return;
       }
       throw new Error("PasswordUnmatched");
@@ -40,9 +39,9 @@ export const logIn = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     if (error.message === "EmailIncorrect") {
-      res.status(400).send({ email: "This email dose not exist" });
+      res.status(400).send({ message: "This email dose not exist" });
     } else if (error.message === "PasswordUnmatched") {
-      res.status(400).send({ password: "Password incorrect" });
+      res.status(400).send({ message: "Password incorrect" });
     } else {
       res.sendStatus(404);
     }

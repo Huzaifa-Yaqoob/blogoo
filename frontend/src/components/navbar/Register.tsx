@@ -1,10 +1,15 @@
-import { useForm, FormProvider } from "react-hook-form";
+import { useState } from "react";
+import { useForm, FormProvider, set } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import { RegisterFormSchema } from "@/lib/validate";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import ButtonLoading from "../ButtonLoading";
+import ErrorMessage from "../ErrorMessage";
+import { register } from "@/api/api";
+import { useUserStore } from "@/lib/store";
 import {
   FormField,
   FormItem,
@@ -12,16 +17,27 @@ import {
   FormControl,
   FormMessage,
 } from "ui/form";
-import ButtonLoading from "../ButtonLoading";
-import { register } from "@/api/user.ts";
 
 export default function Register() {
-  const client = useQueryClient();
-  const registerUser = useMutation("register", register, {
-    onSuccess: () => {
-      console.log(registerUser);
+  const [err, setErr] = useState("");
+  const [setUser, setIsLogIn] = useUserStore((state) => [
+    state.setUser,
+    state.setIsLogIn,
+  ]);
+  const registrationMutate = useMutation(register, {
+    onSuccess: (data: any) => {
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
+      setIsLogIn(true);
+    },
+    onError: (error: any) => {
+      setErr(error.response.data.message);
     },
   });
+
+  function onSubmit(registerData: z.infer<typeof RegisterFormSchema>) {
+    registrationMutate.mutate(registerData);
+  }
 
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
@@ -31,10 +47,6 @@ export default function Register() {
       password: "",
     },
   });
-
-  function onSubmit(registerData: z.infer<typeof RegisterFormSchema>) {
-    registerUser.mutate(registerData);
-  }
 
   return (
     <FormProvider {...form}>
@@ -78,8 +90,9 @@ export default function Register() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          {registerUser.isLoading ? <ButtonLoading /> : "Register"}
+        {registrationMutate.isError ? <ErrorMessage message={err} /> : <></>}
+        <Button type="submit" className="w-full text-primary-foreground">
+          {registrationMutate.isLoading ? <ButtonLoading /> : "Register"}
         </Button>
       </form>
     </FormProvider>
