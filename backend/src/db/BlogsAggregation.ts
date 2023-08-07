@@ -43,7 +43,7 @@ const sort = {
   createdAt: -1,
 };
 
-export const allBlogs = async () => {
+export const allBlogs = async (id = "") => {
   return await Blog.aggregate([
     {
       $match: {
@@ -52,14 +52,14 @@ export const allBlogs = async () => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: addFields },
-    { $project: project },
+    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
+    { $project: { ...project, liked: 1 } },
     { $sort: { createdAt: -1 } },
     { $limit: 20 },
   ]);
 };
 
-export const titledBlogs = async (title: string) => {
+export const titledBlogs = async (title: string, id = "") => {
   const regex = new RegExp(`\\b${title}\\b`, "i");
 
   return await Blog.aggregate([
@@ -73,14 +73,14 @@ export const titledBlogs = async (title: string) => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: addFields },
-    { $project: project },
+    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
+    { $project: { ...project, liked: 1 } },
     { $sort: { createdAt: -1 } },
     { $limit: 20 },
   ]);
 };
 
-export const categoryBlogs = async (category: string) => {
+export const categoryBlogs = async (category: string, id = "") => {
   return await Blog.aggregate([
     {
       $match: {
@@ -92,14 +92,14 @@ export const categoryBlogs = async (category: string) => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: addFields },
+    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
     { $project: project },
     { $sort: { createdAt: -1 } },
     { $limit: 20 },
   ]);
 };
 
-export const userBlogs = async (userID: string) => {
+export const userBlogs = async (userID: string, id = "") => {
   return await Blog.aggregate([
     {
       $match: {
@@ -108,11 +108,12 @@ export const userBlogs = async (userID: string) => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: addFields },
+    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
     {
       $project: {
-        hidden: 1,
         ...project,
+        hidden: 1,
+        liked: 1,
       },
     },
     { $sort: { createdAt: -1 } },
@@ -145,8 +146,8 @@ export const favoriteBlogs = async (userID: string) => {
     },
     { $lookup: userLookup },
     { $lookup: likesLookup },
-    { $addFields: addFields },
-    { $project: project },
+    { $addFields: { ...addFields, liked: true } },
+    { $project: { ...project, liked: 1 } },
     { $sort: { createdAt: -1 } },
     { $limit: 20 },
   ]);

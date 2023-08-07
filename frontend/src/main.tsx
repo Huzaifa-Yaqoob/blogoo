@@ -33,7 +33,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
       <RouterProvider router={router} />
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
+    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </React.StrictMode>
 );

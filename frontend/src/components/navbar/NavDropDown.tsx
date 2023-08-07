@@ -9,8 +9,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUserStore } from "@/lib/store";
 
-export default function NavLinks() {
+export default function NavDropDown() {
+  const [setIsLogIn, setUser] = useUserStore((state) => [
+    state.setIsLogIn,
+    state.setUser,
+  ]);
+
+  const logOut = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsLogIn(false);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -55,7 +66,7 @@ export default function NavLinks() {
           </DropdownMenuItem>
         </NavLink>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="link cursor-pointer">
+        <DropdownMenuItem className="link cursor-pointer" onClick={logOut}>
           <LogOut size={"1rem"} />
           <span className=" ml-4">Log Out</span>
         </DropdownMenuItem>

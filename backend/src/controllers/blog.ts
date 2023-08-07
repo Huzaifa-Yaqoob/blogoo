@@ -44,7 +44,7 @@ export const getBlogsWithCategory = async function (
 export const getBlogsWithTitle = async function (req: Request, res: Response) {
   try {
     const title = req.params.title;
-    res.send(await titledBlogs(title));
+    res.send(await titledBlogs(title,));
   } catch (error) {
     res.sendStatus(404);
   }

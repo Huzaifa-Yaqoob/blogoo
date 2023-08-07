@@ -12,7 +12,7 @@ const route = Router();
 
 route.post("/", register);
 
-route.get("/", logIn);
+route.post("/login", logIn);
 
 route.use(authenticate);
 
