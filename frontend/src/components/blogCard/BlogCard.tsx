@@ -5,8 +5,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Categories from "./Categories";
 
 export default function BlogCard({ imageUrl }: { imageUrl: string }) {
   const cardClick = () => {
@@ -23,7 +25,7 @@ export default function BlogCard({ imageUrl }: { imageUrl: string }) {
     backgroundPosition: "center",
   };
   return (
-    <Card className="" style={backgroundStyle}>
+    <Card style={backgroundStyle}>
       <div className="cardMask">
         <CardHeader className="p-2 flex flex-row items-center space-x-2">
           <Avatar>
@@ -40,6 +42,7 @@ export default function BlogCard({ imageUrl }: { imageUrl: string }) {
             <span className=" text-xs">19-7-2002</span>
           </div>
         </CardHeader>
+        <Categories />
         <CardContent
           onClick={cardClick}
           className="py-1 px-2 overflow-hidden cursor-pointer text-ellipsis line-clamp-4"

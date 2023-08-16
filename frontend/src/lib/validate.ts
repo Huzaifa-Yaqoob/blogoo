@@ -17,6 +17,11 @@ export const RegisterFormSchema = z.object({
   }),
 });
 
+// export const AddBlogSchema = z.object({
+//   img: ,
+
+// });
+
 // user register login response interface
 
 export interface User {

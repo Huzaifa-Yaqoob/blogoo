@@ -31,7 +31,7 @@ export default function NavDropDown() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mt-2 bg-card">
-        <NavLink to="/">
+        <NavLink to="/home">
           <DropdownMenuItem className="link cursor-pointer">
             <Home size={"1rem"} />
             <span className=" ml-4">Home</span>

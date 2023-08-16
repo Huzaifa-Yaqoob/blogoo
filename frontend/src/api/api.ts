@@ -1,14 +1,15 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { z } from "zod";
-import { LoginFormSchema, RegisterFormSchema, User } from "@/lib/validate";
+import { LoginFormSchema, RegisterFormSchema } from "@/lib/validate";
+import { User } from "./apiTypes"
 
-const user = axios.create({
+const api = axios.create({
   baseURL: "http://localhost:3000",
 });
 
-user.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
-    const user: any = localStorage.getItem("user");
+    const user: User = localStorage.getItem("user");
     if (user) {
       config.headers["authorization"] = `Bearer ${user.token}`;
     }
@@ -19,7 +20,7 @@ user.interceptors.request.use(
   }
 );
 
-user.interceptors.response.use(
+api.interceptors.response.use(
   (response) => {
     return response.data;
   },
@@ -29,9 +30,22 @@ user.interceptors.response.use(
 );
 
 export const register = async (data: z.infer<typeof RegisterFormSchema>) => {
-  return await user.post("/user", data);
+  return await api.post("/user", data);
 };
 
 export const logIn = async (data: z.infer<typeof LoginFormSchema>) => {
-  return await user.post("/user/login", data);
+  return await api.post("/user/login", data);
+};
+
+export const getCategories = async () => {
+  return await api.get(`/blog/category`);
+};
+
+export const getAllBlogs = async () => {
+  return await api.get("/blog");
+};
+
+export const getBlogsByCategories = async (category: string) => {
+  console.log(category)
+  return await api.get(`/blog/category/${category}`);
 };
