@@ -64,7 +64,7 @@ export default function Footer() {
           </ul>
         </div>
       </section>
-      <section className="text-center">
+      <section className="text-center text-xs">
         All content and materials on this website are protected by copyright and
         intellectual property laws. Unauthorized use, reproduction, or
         distribution of any content or materials without the express written

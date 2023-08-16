@@ -11,7 +11,7 @@ export const register = async (req: Request, res: Response) => {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     const { _id, username, email, avatar } = await new User(req.body).save();
     const token = createToken(_id.toString());
-    res.send({ username, email, token, avatar });
+    res.send({ username, email, token, avatar, });
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).send({ message: "This account is already exists" });

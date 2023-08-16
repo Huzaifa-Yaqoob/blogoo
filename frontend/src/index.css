@@ -1,5 +1,16 @@
 @tailwind base;
 @tailwind components;
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
 @tailwind utilities;
 
 @layer base {
@@ -94,8 +105,8 @@
 }
 
 .like {
-  fill: #FF2400;
-  stroke: #FF2400;
+  fill: #ff2400;
+  stroke: #ff2400;
 }
 
 .unlike {

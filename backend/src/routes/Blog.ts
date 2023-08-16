@@ -9,10 +9,12 @@ import {
   addBlog,
   updateBlog,
   deleteBlog,
-  getCategories
+  getCategories,
 } from "../controllers/blog";
 
 const route = Router();
+
+route.use(authenticate);
 
 route.get("/", getAllBlogs);
 
@@ -21,8 +23,6 @@ route.get("/category", getCategories);
 route.get("/category/:category", getBlogsWithCategory);
 
 route.get("/title/:title", getBlogsWithTitle);
-
-route.use(authenticate);
 
 route.get("/user-blogs/", getUserBlogs);
 
@@ -35,4 +35,3 @@ route.patch("/:id", updateBlog);
 route.delete("/:id", deleteBlog);
 
 export default route;
-
