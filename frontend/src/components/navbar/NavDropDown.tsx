@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useQueryClient } from "react-query";
 import { Home, LogOut, User, Star, ScrollText, BadgePlus } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,12 +13,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserStore } from "@/lib/store";
 
 export default function NavDropDown() {
+  const client = useQueryClient();
   const [setIsLogIn, setUser] = useUserStore((state) => [
     state.setIsLogIn,
     state.setUser,
   ]);
 
   const logOut = () => {
+    client.clear();
     localStorage.removeItem("user");
     setUser(null);
     setIsLogIn(false);
@@ -34,7 +37,7 @@ export default function NavDropDown() {
         <NavLink to="/home">
           <DropdownMenuItem className="link cursor-pointer">
             <Home size={"1rem"} />
-            <span className=" ml-4">Home</span>
+            <span className="ml-4">Home</span>
           </DropdownMenuItem>
         </NavLink>
         <DropdownMenuSeparator />
@@ -50,19 +53,19 @@ export default function NavDropDown() {
         <NavLink to="/favorite">
           <DropdownMenuItem className="link cursor-pointer my-1">
             <Star size={"1rem"} />
-            <span className=" ml-4">Favorite</span>
+            <span className="ml-4">Favorite</span>
           </DropdownMenuItem>
         </NavLink>
         <NavLink to="/my-blogs">
-          <DropdownMenuItem className="link cursor-pointer">
+          <DropdownMenuItem className="link cursor-pointer my-1">
             <ScrollText size={"1rem"} />
             <span className=" ml-4">My Blogs</span>
           </DropdownMenuItem>
         </NavLink>
         <NavLink to="/add-blog">
-          <DropdownMenuItem className="link cursor-pointer">
+          <DropdownMenuItem className="link cursor-pointer my-1">
             <BadgePlus size={"1rem"} />
-            <span className=" ml-4">Add Blogs</span>
+            <span className="ml-4">Add Blogs</span>
           </DropdownMenuItem>
         </NavLink>
         <DropdownMenuSeparator />

@@ -4,14 +4,16 @@ import { User } from "../db/database";
 import validateID from "../lib/validateId";
 import { createToken } from "../lib/authToken";
 import { CustomRequest } from "../middleware/authenticate";
+import adminAuth from "../lib/adminAuth";
 
 export const register = async (req: Request, res: Response) => {
   try {
     const salt = await bcrypt.genSalt();
     req.body.password = await bcrypt.hash(req.body.password, salt);
     const { _id, username, email, avatar } = await new User(req.body).save();
+    const isAdmin = (await adminAuth(_id.toString())) === null ? false : true;
     const token = createToken(_id.toString());
-    res.send({ username, email, token, avatar, });
+    res.send({ username, email, avatar, token, isAdmin });
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).send({ message: "This account is already exists" });
@@ -27,10 +29,16 @@ export const logIn = async (req: Request, res: Response) => {
     if (user) {
       const auth = await bcrypt.compare(req.body.password, user.password);
       if (auth) {
+        const isAdmin =
+          (await adminAuth(user._id.toString())) === null ? false : true;
         const token = createToken(user._id.toString());
-        res
-          .setHeader("authorization", `Bearer ${token}`)
-          .send({ email: user.email, username: user.username, avatar: user.avatar });
+        res.send({
+          email: user.email,
+          username: user.username,
+          avatar: user.avatar,
+          token,
+          isAdmin,
+        });
         return;
       }
       throw new Error("PasswordUnmatched");

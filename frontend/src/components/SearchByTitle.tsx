@@ -1,13 +1,21 @@
-import { FormEvent } from "react";
-import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useQueryClient } from "react-query";
+import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
+import { getBlogsByTitleName } from "@/api/api";
 
 export default function SearchByTitle() {
-  const search = (e: FormEvent) => {
+  const client = useQueryClient();
+
+  const search = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(document.getElementById);
+    const titleInput = document.getElementById("title") as HTMLInputElement;
+    const title: string = titleInput?.value;
+    const updatedData = await getBlogsByTitleName(title);
+    console.log(updatedData);
+    client.setQueryData("blogs", updatedData);
   };
+
   return (
     <form
       onSubmit={search}

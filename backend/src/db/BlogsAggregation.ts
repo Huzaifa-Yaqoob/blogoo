@@ -39,11 +39,7 @@ export const project = {
   uploadedDate: 1,
 };
 
-const sort = {
-  createdAt: -1,
-};
-
-export const allBlogs = async (id = "") => {
+export const allBlogs = async (id: string) => {
   return await Blog.aggregate([
     {
       $match: {
@@ -52,14 +48,21 @@ export const allBlogs = async (id = "") => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
-    { $project: { ...project, liked: 1 } },
+    {
+      $addFields: {
+        ...addFields,
+        liked: {
+          $in: [new mongoose.Types.ObjectId(id), "$likes.user"],
+        },
+      },
+    },
+    { $project: { ...project, liked: 1, likes: 1 } },
     { $sort: { createdAt: -1 } },
-    { $limit: 20 },
+    // { $limit: 20 },
   ]);
 };
 
-export const titledBlogs = async (title: string, id = "") => {
+export const titledBlogs = async (title: string, id: string) => {
   const regex = new RegExp(`\\b${title}\\b`, "i");
 
   return await Blog.aggregate([
@@ -73,14 +76,21 @@ export const titledBlogs = async (title: string, id = "") => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
+    {
+      $addFields: {
+        ...addFields,
+        liked: {
+          $in: [new mongoose.Types.ObjectId(id), "$likes.user"],
+        },
+      },
+    },
     { $project: { ...project, liked: 1 } },
     { $sort: { createdAt: -1 } },
-    { $limit: 20 },
+    // { $limit: 20 },
   ]);
 };
 
-export const categoryBlogs = async (category: string, id = "") => {
+export const categoryBlogs = async (category: string, id: string) => {
   return await Blog.aggregate([
     {
       $match: {
@@ -92,23 +102,37 @@ export const categoryBlogs = async (category: string, id = "") => {
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
-    { $project: project },
+    {
+      $addFields: {
+        ...addFields,
+        liked: {
+          $in: [new mongoose.Types.ObjectId(id), "$likes.user"],
+        },
+      },
+    },
+    { $project: { ...project, likes: 1 } },
     { $sort: { createdAt: -1 } },
-    { $limit: 20 },
+    // { $limit: 20 },
   ]);
 };
 
-export const userBlogs = async (userID: string, id = "") => {
+export const userBlogs = async (id: string) => {
   return await Blog.aggregate([
     {
       $match: {
-        author_id: new mongoose.Types.ObjectId(userID),
+        author_id: new mongoose.Types.ObjectId(id),
       },
     },
     { $lookup: likesLookup },
     { $lookup: userLookup },
-    { $addFields: { ...addFields, liked: { $ne: [id, "likes.user"] } } },
+    {
+      $addFields: {
+        ...addFields,
+        liked: {
+          $in: [new mongoose.Types.ObjectId(id), "$likes.user"],
+        },
+      },
+    },
     {
       $project: {
         ...project,
@@ -117,7 +141,7 @@ export const userBlogs = async (userID: string, id = "") => {
       },
     },
     { $sort: { createdAt: -1 } },
-    { $limit: 20 },
+    // { $limit: 20 },
   ]);
 };
 
@@ -149,6 +173,6 @@ export const favoriteBlogs = async (userID: string) => {
     { $addFields: { ...addFields, liked: true } },
     { $project: { ...project, liked: 1 } },
     { $sort: { createdAt: -1 } },
-    { $limit: 20 },
+    // { $limit: 20 },
   ]);
 };
