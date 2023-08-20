@@ -19,9 +19,9 @@ export const getCategories = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllBlogs = async function (req: Request, res: Response) {
+export const getAllBlogs = async function (req: CustomRequest, res: Response) {
   try {
-    res.send(await allBlogs());
+    res.send(await allBlogs(req.userId));
   } catch (error) {
     console.log(error);
     res.sendStatus(404);
@@ -29,22 +29,25 @@ export const getAllBlogs = async function (req: Request, res: Response) {
 };
 
 export const getBlogsWithCategory = async function (
-  req: Request,
+  req: CustomRequest,
   res: Response
 ) {
   try {
     const category = req.params.category;
     console.log(category);
-    res.send(await categoryBlogs(category));
+    res.send(await categoryBlogs(category, req.userId));
   } catch (error) {
     res.sendStatus(404);
   }
 };
 
-export const getBlogsWithTitle = async function (req: Request, res: Response) {
+export const getBlogsWithTitle = async function (
+  req: CustomRequest,
+  res: Response
+) {
   try {
     const title = req.params.title;
-    res.send(await titledBlogs(title,));
+    res.send(await titledBlogs(title, req.userId));
   } catch (error) {
     res.sendStatus(404);
   }

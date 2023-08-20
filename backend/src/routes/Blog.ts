@@ -24,9 +24,9 @@ route.get("/category/:category", getBlogsWithCategory);
 
 route.get("/title/:title", getBlogsWithTitle);
 
-route.get("/user-blogs/", getUserBlogs);
+route.get("/user/", getUserBlogs);
 
-route.get("/favorite-blogs/", getFavoriteBlogs);
+route.get("/favorite/", getFavoriteBlogs);
 
 route.post("/", addBlog);
 

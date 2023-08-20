@@ -13,7 +13,7 @@ const authenticate = (
   try {
     const { authorization } = req.headers;
     if (!authorization) {
-      throw new Error(); 
+      throw new Error();
     }
     const token: string = authorization.split(" ")[1];
     req.userId = decodeToken(token);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { z } from "zod";
 import { LoginFormSchema, RegisterFormSchema } from "@/lib/validate";
-import { User } from "./apiTypes"
+import { User } from "./apiTypes";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -9,7 +9,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const user: User = localStorage.getItem("user");
+    let user: User = localStorage.getItem("user");
+    user = JSON.parse(user);
     if (user) {
       config.headers["authorization"] = `Bearer ${user.token}`;
     }
@@ -38,7 +39,7 @@ export const logIn = async (data: z.infer<typeof LoginFormSchema>) => {
 };
 
 export const getCategories = async () => {
-  return await api.get(`/blog/category`);
+  return await api.get("/blog/category");
 };
 
 export const getAllBlogs = async () => {
@@ -46,6 +47,29 @@ export const getAllBlogs = async () => {
 };
 
 export const getBlogsByCategories = async (category: string) => {
-  console.log(category)
   return await api.get(`/blog/category/${category}`);
+};
+
+export const getBlogsByTitleName = async (title: string) => {
+  return await api.get(`/blog/title/${title}`);
+};
+
+export const getUserBlogs = async (id: string) => {
+  return await api.get(`/blog/user`);
+};
+
+export const getFavoriteBlogs = async () => {
+  return await api.get(`/blog/favorite`);
+};
+
+export const addBlogs = async (blog: any) => {
+  return await api.post(`/blog`, blog);
+};
+
+export const deleteBlogs = async (id: string) => {
+  return await api.delete(`/blog/${id}`,);
+};
+
+export const like = async (id: string) => {
+  return await api.post(`/like/${id}`);
 };
