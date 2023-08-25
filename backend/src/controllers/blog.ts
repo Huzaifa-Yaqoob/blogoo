@@ -34,7 +34,6 @@ export const getBlogsWithCategory = async function (
 ) {
   try {
     const category = req.params.category;
-    console.log(category);
     res.send(await categoryBlogs(category, req.userId));
   } catch (error) {
     res.sendStatus(404);

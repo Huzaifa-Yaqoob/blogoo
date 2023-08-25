@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "react-query";
 import { Heart } from "lucide-react";
 import { like } from "@/api/api";
 import {
@@ -13,8 +14,24 @@ import Categories from "./Categories";
 
 export default function BlogCard({ data }: any) {
   const [isLike, setIsLike] = useState(data.liked);
+  const [likesCount, setLikesCount] = useState(data.likesCount);
+  const client = useQueryClient();
+
   const cardClick = () => {
     console.log("Card clicked");
+  };
+
+  const likeClicked = async () => {
+    try {
+      console.log(isLike);
+      setIsLike(!isLike);
+      console.log(isLike);
+      setLikesCount(!isLike ? likesCount + 1 : likesCount - 1);
+      await like(data._id);
+      client.invalidateQueries("favoriteBlogs");
+    } catch (error) {
+      setIsLike(!isLike);
+    }
   };
 
   const backgroundStyle = {
@@ -53,10 +70,10 @@ export default function BlogCard({ data }: any) {
         </CardContent>
         <CardFooter className="py-1 px-2 flex justify-between">
           <div className="flex space-x-1">
-            <button onClick={() => setIsLike(!isLike)}>
+            <button onClick={likeClicked}>
               <Heart className={`${isLike ? "like" : "unlike"}`} size={20} />
             </button>
-            <p>{isLike ? data.likesCount + 1 : data.likesCount}</p>
+            <p>{likesCount}</p>
           </div>
           <div>{data.authorName}</div>
         </CardFooter>

@@ -8,8 +8,10 @@ export const like = async (req: CustomRequest, res: Response) => {
       !(await Like.findOneAndDelete({ user: req.userId, blog: req.params.id }))
     ) {
       await new Like({ user: req.userId, blog: req.params.id }).save();
+      res.send(false);
+    }else{
+      res.send(true);
     }
-    res.send();
   } catch (error) {
     res.sendStatus(404);
   }
