@@ -21,8 +21,12 @@ export default function SearchByCategory() {
   }
 
   const getFromCategory = async (category: any) => {
-    const data = await getBlogsByCategories(category.value);
-    client.setQueryData("blogs", data);
+    if (category === null) {
+      client.invalidateQueries("blogs");
+    } else {
+      const data = await getBlogsByCategories(category.value);
+      client.setQueryData("blogs", data);
+    }
   };
 
   return (

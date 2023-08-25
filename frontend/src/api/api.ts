@@ -35,7 +35,9 @@ export const register = async (data: z.infer<typeof RegisterFormSchema>) => {
 };
 
 export const logIn = async (data: z.infer<typeof LoginFormSchema>) => {
-  return await api.post("/user/login", data);
+  const a = await api.post("/user/login", data);
+  console.log(a);
+  return a;
 };
 
 export const getCategories = async () => {
@@ -54,7 +56,7 @@ export const getBlogsByTitleName = async (title: string) => {
   return await api.get(`/blog/title/${title}`);
 };
 
-export const getUserBlogs = async (id: string) => {
+export const getUserBlogs = async () => {
   return await api.get(`/blog/user`);
 };
 
@@ -67,7 +69,7 @@ export const addBlogs = async (blog: any) => {
 };
 
 export const deleteBlogs = async (id: string) => {
-  return await api.delete(`/blog/${id}`,);
+  return await api.delete(`/blog/${id}`);
 };
 
 export const like = async (id: string) => {
