@@ -33,7 +33,7 @@ While working on Blogo, a few major challenges surfaced:
 
    ```sh
    git clone https://github.com/Huzaifa-Yaqoob/blogoo.git
-   cd blogo
+   cd blogoo
    ```
 
 2. Set up the frontend:
